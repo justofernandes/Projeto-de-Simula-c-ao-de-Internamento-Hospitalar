@@ -6,7 +6,7 @@
 
 #define TAM_LINHA 256
 
-// Tabela hash encapsulada neste arquivo
+// Tabela hash 
 static struct NoPaciente {
     Paciente paciente;
     struct NoPaciente *prox;

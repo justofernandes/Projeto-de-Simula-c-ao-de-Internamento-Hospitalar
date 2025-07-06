@@ -8,8 +8,7 @@
 #include "../include/historico.h"
 
 int main() {
-    
-    setlocale(LC_ALL, "");  // Acentuação, mas não tá funcionando ao rodar o código, n sei o pq
+    setlocale(LC_ALL, ""); //n ta funcionando, tentar corrigir dps
 
     Deque fila;
     Leitos leitos;
@@ -25,11 +24,13 @@ int main() {
     registrar_log("===== INÍCIO DA SIMULAÇÃO =====");
 
     while (1) {
+        int houve_acao = 0;  // controle de ações a cada ciclo
+
         char buffer[60];
         sprintf(buffer, "\n[CICLO %02d]", ciclo++);
         registrar_log(buffer);
 
-        // Alta hospitalar (chance de 1/3 por leito ocupado)
+        // ===== ALTAS HOSPITALARES ALEATORIAS =====
         for (int i = 0; i < MAX_LEITOS; i++) {
             if (leitos.ocupados[i] && (rand() % 3 == 0)) {
                 Paciente alta = *(leitos.leitos[i]);
@@ -39,10 +40,11 @@ int main() {
                 char msg[150];
                 sprintf(msg, "ALTA - %s (%s)", alta.id, alta.nome);
                 registrar_log(msg);
+                houve_acao = 1;
             }
         }
 
-        // Internar paciente da fila
+        // ===== INTERNAMENTO DOS PACIENTES =====
         if (!fila_vazia(&fila)) {
             Paciente proximo = remover_fila(&fila);
             int leito_index = internar_paciente(&leitos, proximo);
@@ -50,16 +52,17 @@ int main() {
                 char msg[200];
                 sprintf(msg, "INTERNADO - %s (%s, prioridade %d)", proximo.id, proximo.nome, proximo.prioridade);
                 registrar_log(msg);
-            } else {
+                houve_acao = 1;
+            } 
+            else {
                 char msg[200];
-                sprintf(msg, "! Todos os leitos estão ocupados. %s (%s) não pôde ser internado.",
-                        proximo.id, proximo.nome);
+                sprintf(msg, "! Todos os leitos estão ocupados. %s (%s) não pôde ser internado.", proximo.id, proximo.nome);
                 registrar_log(msg);
                 inserir_fila(&fila, proximo);  // devolve para a fila
             }
         }
 
-        // Sortear paciente da tabela hash e inserir na fila
+        // ===== SORTEIO PARA INSERIR NA FILA =====
         if (fila.tamanho < TAM_DEQUE) {
             Paciente *sorteado = sortear_paciente();
             if (sorteado) {
@@ -67,23 +70,33 @@ int main() {
                 if (inserido) {
                     char msg[250];
                     const char *pos = (sorteado->prioridade >= 4) ? "início" : "fim";
-                    sprintf(msg, "ESPERA - %s (%s, prioridade %d) -> inserido no %s do deque",
-                            sorteado->id, sorteado->nome, sorteado->prioridade, pos);
+                    sprintf(msg, "ESPERA - %s (%s, prioridade %d) -> inserido no %s do deque", sorteado->id, sorteado->nome, sorteado->prioridade, pos);
                     registrar_log(msg);
+                    houve_acao = 1;
                 }
             }
-        } else {
+        } 
+        else {
             registrar_log("! Deque está cheio. Paciente não pôde ser adicionado.");
         }
 
-        // Verifica fim da simulação
+        // Verifica se algo aconteceu
+        if (!houve_acao) {
+            registrar_log("! Nenhuma ação realizada neste ciclo.");
+        }
+
+        // Verifica para encerrar o programa
         if (!paciente_disponivel() && fila_vazia(&fila)) {
             int leitos_ocupados = 0;
             for (int i = 0; i < MAX_LEITOS; i++)
-                if (leitos.ocupados[i]) leitos_ocupados++;
+                if (leitos.ocupados[i]) {
+                    leitos_ocupados++;
+                }    
 
-            if (leitos_ocupados == 0)
+            if (leitos_ocupados == 0) {
                 break;
+            }
+                
         }
 
         sleep(2);
