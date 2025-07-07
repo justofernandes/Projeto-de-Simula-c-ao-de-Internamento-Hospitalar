@@ -1,22 +1,27 @@
 CC = gcc
-CFLAGS = -Wall
-INCLUDES = -Iinclude
-SRC = src/paciente.c src/fila.c src/leito.c src/historico.c src/main.c
+CFLAGS = -Wall -Iinclude
 
-ifeq ($(OS),Windows_NT)
-	EXE = .exe
-else
-	EXE =
-endif
+OBJETOS = paciente.o fila.o leito.o historico.o main.o
 
-OUT = simulador$(EXE)
+all: simulador
 
-all: $(SRC)
-	$(CC) $(CFLAGS) $(SRC) -o $(OUT) $(INCLUDES)
+simulador: $(OBJETOS)
+	$(CC) $(CFLAGS) -o simulador $(OBJETOS)
+
+paciente.o: src/paciente.c
+	$(CC) $(CFLAGS) -c src/paciente.c
+
+fila.o: src/fila.c
+	$(CC) $(CFLAGS) -c src/fila.c
+
+leito.o: src/leito.c
+	$(CC) $(CFLAGS) -c src/leito.c
+
+historico.o: src/historico.c
+	$(CC) $(CFLAGS) -c src/historico.c
+
+main.o: src/main.c
+	$(CC) $(CFLAGS) -c src/main.c
 
 clean:
-ifeq ($(OS),Windows_NT)
-	del /Q $(OUT) processamento.log 2>nul
-else
-	rm -f $(OUT) processamento.log
-endif
+	rm -f *.o simulador processamento.log

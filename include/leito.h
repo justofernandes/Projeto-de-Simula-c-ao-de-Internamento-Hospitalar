@@ -6,7 +6,7 @@
 #define MAX_LEITOS 10
 
 typedef struct {
-    Paciente *leitos[MAX_LEITOS];
+    Paciente *leitos[MAX_LEITOS];   //Estrutura para os leitos
     int ocupados[MAX_LEITOS];
 } Leitos;
 

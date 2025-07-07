@@ -14,6 +14,7 @@ int main() {
     Leitos leitos;
     PilhaHistorico historico;
 
+    // ===== Inicializa tudo =====
     inicializar_fila(&fila);
     inicializar_leitos(&leitos);
     inicializar_pilha(&historico);
@@ -99,7 +100,7 @@ int main() {
                 
         }
 
-        sleep(2);
+        sleep(2); //Espera 2s
     }
 
     registrar_log("===== FIM DA SIMULAÇÃO =====");
