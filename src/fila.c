@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include "../include/fila.h"
 
+//Inicia o deque com inicio e fim = NULL;
 void inicializar_fila(Deque *fila) {
     fila->inicio = fila->fim = NULL;
     fila->tamanho = 0;
 }
+
 
 int inserir_fila(Deque *fila, Paciente p) {
     if (fila->tamanho >= TAM_DEQUE)
@@ -15,16 +17,26 @@ int inserir_fila(Deque *fila, Paciente p) {
     novo->paciente = p;
     novo->prox = novo->ant = NULL;
 
+    // PRIORIDADE ALTA → início da fila
     if (p.prioridade >= 4) {
-        novo->prox = fila->inicio;
-        if (fila->inicio) fila->inicio->ant = novo;
+        if (fila->inicio) {
+            novo->prox = fila->inicio;
+            fila->inicio->ant = novo;
+        }
         fila->inicio = novo;
-        if (!fila->fim) fila->fim = novo;
-    } else {
-        novo->ant = fila->fim;
-        if (fila->fim) fila->fim->prox = novo;
+
+        if (!fila->fim)
+            fila->fim = novo;
+
+    } else { // PRIORIDADE BAIXA → fim da fila
+        if (fila->fim) {
+            novo->ant = fila->fim;
+            fila->fim->prox = novo;
+        }
         fila->fim = novo;
-        if (!fila->inicio) fila->inicio = novo;
+
+        if (!fila->inicio)
+            fila->inicio = novo;
     }
 
     fila->tamanho++;
