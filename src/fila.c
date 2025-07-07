@@ -8,7 +8,7 @@ void inicializar_fila(Deque *fila) {
     fila->tamanho = 0;
 }
 
-//
+//Responsável por adicionar um novo paciente ao deque
 int inserir_fila(Deque *fila, Paciente p) {
     if (fila->tamanho >= TAM_DEQUE) //Verifica se está cheio
         return 0;

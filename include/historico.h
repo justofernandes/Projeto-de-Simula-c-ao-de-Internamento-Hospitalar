@@ -3,12 +3,12 @@
 
 #include "paciente.h"
 
-typedef struct NoHist {
-    Paciente paciente;
+typedef struct NoHist { //Representa um nó da pilha de histórico.
+    Paciente paciente; 
     struct NoHist *prox;
 } NoHist;
 
-typedef struct {
+typedef struct { //Estrutura da pilha que controla os pacientes já atendidos.
     NoHist *topo;
 } PilhaHistorico;
 
