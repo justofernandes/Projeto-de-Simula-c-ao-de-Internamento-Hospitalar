@@ -16,6 +16,7 @@ typedef struct {
     int tamanho;
 } Deque;
 
+//Definicoes dos metodos e funcoes 
 void inicializar_fila(Deque *fila);
 int inserir_fila(Deque *fila, Paciente p);
 Paciente remover_fila(Deque *fila);
