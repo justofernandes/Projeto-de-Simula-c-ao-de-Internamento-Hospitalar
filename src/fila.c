@@ -8,16 +8,17 @@ void inicializar_fila(Deque *fila) {
     fila->tamanho = 0;
 }
 
-
+//
 int inserir_fila(Deque *fila, Paciente p) {
-    if (fila->tamanho >= TAM_DEQUE)
+    if (fila->tamanho >= TAM_DEQUE) //Verifica se está cheio
         return 0;
 
+    //Aloca memoria para um novo no, ja definindo inicio e fim como null
     NodoFila *novo = malloc(sizeof(NodoFila));
     novo->paciente = p;
     novo->prox = novo->ant = NULL;
 
-    // PRIORIDADE ALTA → início da fila
+    // Adiciona no inicio
     if (p.prioridade >= 4) {
         if (fila->inicio) {
             novo->prox = fila->inicio;
@@ -28,7 +29,7 @@ int inserir_fila(Deque *fila, Paciente p) {
         if (!fila->fim)
             fila->fim = novo;
 
-    } else { // PRIORIDADE BAIXA → fim da fila
+    } else { // adiciona no fim
         if (fila->fim) {
             novo->ant = fila->fim;
             fila->fim->prox = novo;
@@ -39,37 +40,50 @@ int inserir_fila(Deque *fila, Paciente p) {
             fila->inicio = novo;
     }
 
-    fila->tamanho++;
+    fila->tamanho++;    //Adiicona +1 na quantidade
     return 1;
 }
 
+//Remove um paciente da fila
 Paciente remover_fila(Deque *fila) {
     NodoFila *remover;
     Paciente paciente;
 
     if (!fila->inicio) {
-        printf("Erro: Fila vazia.\n");
+        printf("Erro: Fila vazia.\n"); //Verifica se a fila está vazia
         exit(1);
     }
 
+    //Ponteiros auxiliares
     NodoFila *ini = fila->inicio;
     NodoFila *fim = fila->fim;
 
+    // Comparação de prioridades inicio e fim do deque
     if (ini->paciente.prioridade >= fim->paciente.prioridade) {
+        // Remove do início
         remover = ini;
         fila->inicio = ini->prox;
-        if (fila->inicio) fila->inicio->ant = NULL;
-        if (fila->fim == remover) fila->fim = NULL;
+        if (fila->inicio) {
+            fila->inicio->ant = NULL;
+        }
+        if (fila->fim == remover) {
+            fila->fim = NULL;
+        }
     } else {
+        // Remove do fim
         remover = fim;
         fila->fim = fim->ant;
-        if (fila->fim) fila->fim->prox = NULL;
-        if (fila->inicio == remover) fila->inicio = NULL;
+        if (fila->fim) {
+            fila->fim->prox = NULL;
+        }
+        if (fila->inicio == remover) {
+            fila->inicio = NULL;
+        }
     }
 
     paciente = remover->paciente;
     free(remover);
-    fila->tamanho--;
+    fila->tamanho--; //Decrementa
     return paciente;
 }
 

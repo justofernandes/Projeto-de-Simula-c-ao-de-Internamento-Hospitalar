@@ -12,20 +12,23 @@ static struct NoPaciente {
     struct NoPaciente *prox;
 } *tabela_hash[TAM_TABELA];
 
+//Inicia a tabela
 void inicializar_tabela() {
     for (int i = 0; i < TAM_TABELA; i++)
         tabela_hash[i] = NULL;
 }
 
+//Cria a chave somando os elementos da string por ASCII e pegando o resto da div por 50
 int funcao_hash(const char *id) {
     int soma = 0;
-    for (int i = 0; id[i] != '\0'; i++)
+    for (int i = 0; id[i] != '\0'; i++) //ler e soma cada elemento
         soma += id[i];
-    return soma % TAM_TABELA;
+    return soma % TAM_TABELA; //TAM = 50
 }
 
+//É chamada em carregar_pacientes, para, apos preencheido os cmapos, inserir o paciente na tabela
 void inserir_paciente(Paciente p) {
-    int indice = funcao_hash(p.id);
+    int indice = funcao_hash(p.id); //Chamada da funçao hash
     struct NoPaciente *novo = malloc(sizeof(struct NoPaciente));
     if (!novo) {
         perror("Erro ao alocar memória para paciente");
@@ -36,6 +39,7 @@ void inserir_paciente(Paciente p) {
     tabela_hash[indice] = novo;
 }
 
+//Abre o arquivo e vai alocando os campos do paciente
 void carregar_pacientes_csv(const char *caminho) {
     FILE *arquivo = fopen(caminho, "r");
     if (!arquivo) {
@@ -53,6 +57,7 @@ void carregar_pacientes_csv(const char *caminho) {
         char *token = strtok(linha, ";");
         int campo = 0;
 
+        //Adiciona os campos a struct paciente
         while (token != NULL) {
             switch (campo) {
                 case 0: strncpy(p.id, token, sizeof(p.id)); p.id[sizeof(p.id)-1] = '\0'; break;
@@ -67,12 +72,14 @@ void carregar_pacientes_csv(const char *caminho) {
             campo++;
         }
 
+        //insere o paciente ao final
         inserir_paciente(p);
     }
 
     fclose(arquivo);
 }
 
+//Faz o sorteio por "força bruta"
 Paciente* sortear_paciente() {
     srand(time(NULL));
     for (int tentativas = 0; tentativas < 200; tentativas++) {
@@ -90,6 +97,7 @@ Paciente* sortear_paciente() {
     return NULL;
 }
 
+//Verifica se o paciente ja foi atendido ou nn
 int paciente_disponivel() {
     for (int i = 0; i < TAM_TABELA; i++) {
         struct NoPaciente *atual = tabela_hash[i];
@@ -102,6 +110,7 @@ int paciente_disponivel() {
     return 0;
 }
 
+//Armazena a mensagem no log, abrindo e fechando e arquivo, e após imprime no terminal.
 void registrar_log(const char *mensagem) {
     FILE *log = fopen("processamento.log", "a");
     if (log) {
